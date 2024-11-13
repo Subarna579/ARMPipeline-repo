@@ -454,7 +454,7 @@
         "Commvault": "cleanroom"
       },
       "sku": {
-        "name": "Premium_LRS",
+        "name": "Standard_LRS",
         "tier": "Standard"
       },
       "kind": "StorageV2",
