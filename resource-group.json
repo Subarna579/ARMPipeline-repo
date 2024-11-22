@@ -1,0 +1,92 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "Resource Group": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of the Resource Group"
+            },
+            "defaultValue": "RG-Cleanroom-Prod"
+        },
+        "Storage Account": {
+            "defaultValue": "cleanroomstorprod",
+            "type": "String",
+            "metadata": {
+                "description": "Name of the storage account"
+            }
+        },
+        "Isolated Virtual Network": {
+            "defaultValue": "Cleanroom-Isolated-vNet",
+            "type": "String",
+            "metadata": {
+                "description": "Cleanroom Isolated Virtual Network Name"
+            }
+        },
+        "Isolated Network Security Group": {
+            "defaultValue": "Cleanroom-Isolated-NSG",
+            "type": "String",
+            "metadata": {
+                "description": "Cleanroom Isolated Network Security Group Name"
+            }
+        },
+        "Infrastructure Virtual Network": {
+            "type": "string",
+            "defaultValue": "Cleanroom-Infra-vNet",
+            "metadata": {
+                "description": "Cleanroom Infrastructure Virtual Network Name"
+            }
+        },
+        "Infrastructure Network Security Group": {
+            "defaultValue": "Cleanroom-Infra-NSG",
+            "type": "String",
+            "metadata": {
+                "description": "Cleanroom Infrastructure Network Security Group Name"
+            }
+        }
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Resources/resourceGroups",
+            "apiVersion": "2021-04-01",
+            "location": "[deployment().location]",
+            "name": "[parameters('Resource Group')]",
+            "properties": {}
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2022-09-01",
+            "name": "Resources",
+            "resourceGroup": "[parameters('Resource Group')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/resourceGroups', parameters('Resource Group'))]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "https://raw.githubusercontent.com/Subarna579/ARMPipeline-repo/refs/heads/main/resources.json"
+                },
+                "parameters": {
+                    "region_Cleanroom": {
+                        "value": "[deployment().location]"
+                    },
+                    "virtualNetworks_Cleanroom_Infra_vNet_name": {
+                        "value": "[parameters('Infrastructure Virtual Network')]"
+                    },
+                    "virtualNetworks_Cleanroom_Isolated_vNet_name": {
+                        "value": "[parameters('Isolated Virtual Network')]"
+                    },
+                    "storageAccounts_cvltcleanroomstorageacc_name": {
+                        "value": "[parameters('Storage Account')]"
+                    },
+                    "networkSecurityGroups_Cleanroom_Infra_NSG_name": {
+                        "value": "[parameters('Infrastructure Network Security Group')]"
+                    },
+                    "networkSecurityGroups_Cleanroom_Isolated_NSG_name": {
+                        "value": "[parameters('Isolated Network Security Group')]"
+                    }
+                }
+            }
+        }
+    ]
+}
